@@ -2,22 +2,13 @@ import { Response, Request } from "express";
 import { QuestionService } from "../services/question.service";
 import { responses } from "../constant";
 export class QuestionController {
-  static getQuestion = async (_: Request, res: Response) => {
+  static getQuestion = async (req: Request, res: Response) => {
     try {
-      const question = await QuestionService.getQuestion();
-      if (question.length === 0) {
-        res.status(404).json({
-          success: false,
-          message: responses.errorNotFound,
-          question,
-        });
-      }
-      res.status(200).json({
-        success: true,
-        message: responses.successGetItem,
-        count: question.length,
-        question,
-      });
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.page as string) || 5;
+      const result = await QuestionService.getQuestion(page, limit);
+
+      res.json(result);
     } catch (error) {
       res
         .status(500)
